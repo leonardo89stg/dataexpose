@@ -1,1 +1,39 @@
-GRUB_BACKGROUND=/path/to/your/bg.jpg  
+
+Se o arquivo /boot/grub/grub.cfg já existe, você não precisa criá-lo manualmente; você apenas precisa atualizar o GRUB para aplicar as novas configurações. Aqui está o passo a passo completo para garantir que a tela de fundo personalizada seja aplicada corretamente:
+
+Passos Detalhados
+Coloque a Imagem de Fundo em /boot/grub/
+
+Se ainda não o fez, copie sua imagem PNG para o diretório /boot/grub/.
+
+bash
+Copiar código
+sudo cp /caminho/para/sua_imagem.png /boot/grub/
+Edite o Arquivo de Configuração do GRUB
+
+Abra o arquivo de configuração do GRUB para edição:
+
+bash
+Copiar código
+sudo nano /etc/default/grub
+Adicione ou edite a linha GRUB_BACKGROUND para apontar para a sua imagem:
+
+bash
+Copiar código
+GRUB_BACKGROUND=/boot/grub/sua_imagem.png
+Salve e feche o editor (Ctrl+X, depois Y e Enter no nano).
+
+Atualize a Configuração do GRUB
+
+Execute o comando para atualizar a configuração do GRUB. Isso regenerará o arquivo /boot/grub/grub.cfg com base nas configurações no arquivo /etc/default/grub:
+
+bash
+Copiar código
+sudo grub-mkconfig -o /boot/grub/grub.cfg
+Reinicie o Computador
+
+Reinicie para aplicar as alterações:
+
+bash
+Copiar código
+sudo reboot
