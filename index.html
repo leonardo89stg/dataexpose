@@ -1,13 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Leo gomes</title>
-  </head>
-  <body>
-    <a href="#">About me </a> <br>
-<hr>
-    <a href="#">Free Books</a>
-  </body>
-</html>
+#!/bin/bash
+
+# Número de rotações
+rotacoes=10
+
+for ((i=0; i<$rotacoes; i++))
+do
+    echo -ne "Execução  /\r"
+    sleep 0.2
+    echo -ne "Execução  -\r"
+    sleep 0.2
+    echo -ne "Execução  \\\r"
+    sleep 0.2
+    echo -ne "Execução  |\r"
+    sleep 0.2
+done
+
+echo -ne "Execução concluída!\n"
