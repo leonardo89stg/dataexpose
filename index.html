@@ -3,16 +3,19 @@
 # Número de rotações
 rotacoes=10
 
+# Definindo os caracteres de rotação
+spinner="/ - \\ |"
+
+# Loop para a rotação
 for ((i=0; i<$rotacoes; i++))
 do
-    echo -ne "Execução  /\r"
-    sleep 0.2
-    echo -ne "Execução  -\r"
-    sleep 0.2
-    echo -ne "Execução  \\\r"
-    sleep 0.2
-    echo -ne "Execução  |\r"
-    sleep 0.2
+    for char in $spinner
+    do
+        # Limpar a linha atual e imprimir o novo caractere
+        echo -ne "Execução $char\r"
+        sleep 0.2
+    done
 done
 
-echo -ne "Execução concluída!\n"
+# Mensagem final
+echo -ne "Execução concluída!   \n"
