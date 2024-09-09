@@ -18,7 +18,7 @@ foreach ($sizes as $size) {
         foreach ($files as $file) {
             $icons[] = [
                 'path' => $file,
-                'url' => '/icons/' . basename($file), // Atualize o caminho relativo
+                'url' => $file, // Usar o caminho completo para o <img src>
                 'name' => basename($file)
             ];
         }
@@ -67,10 +67,12 @@ foreach ($sizes as $size) {
         <?php
         // Exibe os ícones
         foreach ($icons as $icon) {
-            // Verifica se o arquivo existe
-            if (file_exists($iconDirectory . $icon['name'])) {
+            // Verifica se o arquivo existe e é uma imagem
+            if (file_exists($icon['path'])) {
+                // Obtém o caminho relativo para o navegador
+                $relativePath = str_replace($_SERVER['DOCUMENT_ROOT'], '', $icon['path']);
                 echo "<div class='icon-item'>";
-                echo "<img src='" . htmlspecialchars($icon['url']) . "' alt='" . htmlspecialchars($icon['name']) . "'>";
+                echo "<img src='" . htmlspecialchars($relativePath) . "' alt='" . htmlspecialchars($icon['name']) . "'>";
                 echo "<p>" . htmlspecialchars($icon['name']) . "</p>";
                 echo "</div>";
             }
