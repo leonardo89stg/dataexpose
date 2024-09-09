@@ -18,7 +18,7 @@ foreach ($sizes as $size) {
         foreach ($files as $file) {
             $icons[] = [
                 'path' => $file,
-                'url' => $file, // Mantenha o caminho do arquivo
+                'url' => '/icons/' . basename($file), // Atualize o caminho relativo
                 'name' => basename($file)
             ];
         }
@@ -67,11 +67,13 @@ foreach ($sizes as $size) {
         <?php
         // Exibe os ícones
         foreach ($icons as $icon) {
-            // Exibe o ícone e o nome
-            echo "<div class='icon-item'>";
-            echo "<img src='" . htmlspecialchars($icon['url']) . "' alt='" . htmlspecialchars($icon['name']) . "'>";
-            echo "<p>" . htmlspecialchars($icon['name']) . "</p>";
-            echo "</div>";
+            // Verifica se o arquivo existe
+            if (file_exists($iconDirectory . $icon['name'])) {
+                echo "<div class='icon-item'>";
+                echo "<img src='" . htmlspecialchars($icon['url']) . "' alt='" . htmlspecialchars($icon['name']) . "'>";
+                echo "<p>" . htmlspecialchars($icon['name']) . "</p>";
+                echo "</div>";
+            }
         }
         ?>
     </div>
