@@ -1,7 +1,6 @@
 sudo chmod 755 /usr/share/applications
 sudo chmod 755 ~/.local/share/applications
 
-
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -33,6 +32,24 @@ function parseDesktopFile($file) {
 
 $directory = '/usr/share/applications/';
 $files = glob($directory . '*.desktop');
+
+function getIconPath($iconName) {
+    // Caminhos possíveis para ícones
+    $iconPaths = [
+        "/usr/share/icons/hicolor/16x16/apps/$iconName",
+        "/usr/share/icons/hicolor/32x32/apps/$iconName",
+        "/usr/share/icons/hicolor/48x48/apps/$iconName",
+        "/usr/share/icons/hicolor/scalable/apps/$iconName",
+    ];
+
+    foreach ($iconPaths as $path) {
+        if (file_exists($path)) {
+            return 'file://' . $path;
+        }
+    }
+
+    return '';
+}
 ?>
 
 <!DOCTYPE html>
@@ -73,13 +90,7 @@ $files = glob($directory . '*.desktop');
             $name = htmlspecialchars($info['Name'] ?? basename($file));
             $icon = htmlspecialchars($info['Icon'] ?? '');
 
-            // Verificar se o ícone é um caminho relativo ou absoluto
-            if ($icon && !preg_match('/^http/', $icon)) {
-                $iconPath = file_exists($icon) ? $icon : '';
-                $iconURL = file_exists($iconPath) ? 'file://' . $iconPath : '';
-            } else {
-                $iconURL = $icon;
-            }
+            $iconURL = getIconPath(basename($icon)); // Pega o nome do ícone e procura nos diretórios
 
             echo "<div class='app-item'>";
             if ($iconURL) {
