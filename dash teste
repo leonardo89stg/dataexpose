@@ -1,9 +1,42 @@
 <?php
-$dir = getenv('HOME') . '/.local/share/applications/';
-$files = glob($dir . '*.desktop');
+function parseDesktopFile($file) {
+    $data = [];
+
+    if (file_exists($file)) {
+        $lines = file($file);
+
+        foreach ($lines as $line) {
+            $line = trim($line);
+
+            // Ignorar comentários e linhas em branco
+            if (empty($line) || $line[0] === '#') {
+                continue;
+            }
+
+            // Separar a linha em chave e valor
+            if (strpos($line, '=') !== false) {
+                list($key, $value) = explode('=', $line, 2);
+                $data[$key] = $value;
+            }
+        }
+    }
+
+    return $data;
+}
+
+// Caminho para o diretório onde estão os arquivos .desktop
+$directory = '/usr/share/applications/'; // Altere para ~/.local/share/applications/ se desejar
+
+// Ler todos os arquivos .desktop do diretório
+$files = glob($directory . '*.desktop');
 
 foreach ($files as $file) {
-    $filename = basename($file); // Obtém apenas o nome do arquivo, sem o caminho
-    echo $filename . "<br>";
+    $info = parseDesktopFile($file);
+    echo "<h2>" . htmlspecialchars($info['Name'] ?? basename($file)) . "</h2>";
+    echo "<p><strong>Nome:</strong> " . htmlspecialchars($info['Name'] ?? 'N/A') . "</p>";
+    echo "<p><strong>Comentário:</strong> " . htmlspecialchars($info['Comment'] ?? 'N/A') . "</p>";
+    echo "<p><strong>Execução:</strong> " . htmlspecialchars($info['Exec'] ?? 'N/A') . "</p>";
+    echo "<p><strong>Ícone:</strong> " . htmlspecialchars($info['Icon'] ?? 'N/A') . "</p>";
+    echo "<hr>";
 }
 ?>
