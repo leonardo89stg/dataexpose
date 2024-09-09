@@ -1,3 +1,7 @@
+sudo chmod 755 /usr/share/applications
+sudo chmod 755 ~/.local/share/applications
+
+
 <?php
 function parseDesktopFile($file) {
     $data = [];
