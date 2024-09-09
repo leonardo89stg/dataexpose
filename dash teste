@@ -3,6 +3,9 @@ sudo chmod 755 ~/.local/share/applications
 
 
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 function parseDesktopFile($file) {
     $data = [];
 
@@ -28,13 +31,10 @@ function parseDesktopFile($file) {
     return $data;
 }
 
-// Caminho para o diretório onde estão os arquivos .desktop
-$directory = '/usr/share/applications/'; // Altere para ~/.local/share/applications/ se desejar
-
-// Ler todos os arquivos .desktop do diretório
+$directory = '/usr/share/applications/';
 $files = glob($directory . '*.desktop');
-
 ?>
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -75,7 +75,6 @@ $files = glob($directory . '*.desktop');
 
             // Verificar se o ícone é um caminho relativo ou absoluto
             if ($icon && !preg_match('/^http/', $icon)) {
-                // Caminho absoluto pode ser necessário para arquivos locais
                 $iconPath = file_exists($icon) ? $icon : '';
                 $iconURL = file_exists($iconPath) ? 'file://' . $iconPath : '';
             } else {
@@ -85,6 +84,8 @@ $files = glob($directory . '*.desktop');
             echo "<div class='app-item'>";
             if ($iconURL) {
                 echo "<img src='" . htmlspecialchars($iconURL) . "' alt='Ícone'>";
+            } else {
+                echo "<p><em>Ícone não encontrado</em></p>";
             }
             echo "<p><strong>Nome:</strong> " . $name . "</p>";
             echo "</div>";
