@@ -1,0 +1,74 @@
+<?php
+function parseDesktopFile($file) {
+    $data = [];
+
+    if (file_exists($file)) {
+        $lines = file($file);
+
+        foreach ($lines as $line) {
+            $line = trim($line);
+
+            // Ignorar comentários e linhas em branco
+            if (empty($line) || $line[0] === '#') {
+                continue;
+            }
+
+            // Separar a linha em chave e valor
+            if (strpos($line, '=') !== false) {
+                list($key, $value) = explode('=', $line, 2);
+                $data[$key] = $value;
+            }
+        }
+    }
+
+    return $data;
+}
+
+// Caminho para o arquivo .desktop
+$file = getenv('HOME') . '/.local/share/applications/meu_aplicativo.desktop';
+$info = parseDesktopFile($file);
+
+// Exibir informações
+?>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informações do Aplicativo</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .panel { border: 1px solid #ddd; padding: 15px; margin: 20px; border-radius: 5px; }
+        .panel h2 { margin-top: 0; }
+        .panel p { margin: 5px 0; }
+        .panel img { max-width: 100px; max-height: 100px; }
+    </style>
+</head>
+<body>
+    <div class="panel">
+        <h2>Informações do Aplicativo</h2>
+        <?php if (!empty($info)): ?>
+            <p><strong>Nome:</strong> <?php echo htmlspecialchars($info['Name'] ?? 'N/A'); ?></p>
+            <p><strong>Comentário:</strong> <?php echo htmlspecialchars($info['Comment'] ?? 'N/A'); ?></p>
+            <p><strong>Execução:</strong> <?php echo htmlspecialchars($info['Exec'] ?? 'N/A'); ?></p>
+            <p><strong>Ícone:</strong> 
+                <?php 
+                $iconPath = htmlspecialchars($info['Icon'] ?? ''); 
+                if (!empty($iconPath) && file_exists($iconPath)): 
+                    // Converte o caminho absoluto em uma URL acessível
+                    $iconUrl = str_replace(getenv('HOME'), 'http://localhost', $iconPath);
+                ?>
+                    <img src="<?php echo $iconUrl; ?>" alt="Ícone do Aplicativo">
+                <?php else: ?>
+                    N/A
+                <?php endif; ?>
+            </p>
+            <p><strong>Terminal:</strong> <?php echo htmlspecialchars($info['Terminal'] ?? 'N/A'); ?></p>
+            <p><strong>Tipo:</strong> <?php echo htmlspecialchars($info['Type'] ?? 'N/A'); ?></p>
+            <p><strong>Categorias:</strong> <?php echo htmlspecialchars($info['Categories'] ?? 'N/A'); ?></p>
+        <?php else: ?>
+            <p>Nenhuma informação disponível.</p>
+        <?php endif; ?>
+    </div>
+</body>
+</html>
