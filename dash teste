@@ -30,13 +30,62 @@ $directory = '/usr/share/applications/'; // Altere para ~/.local/share/applicati
 // Ler todos os arquivos .desktop do diretório
 $files = glob($directory . '*.desktop');
 
-foreach ($files as $file) {
-    $info = parseDesktopFile($file);
-    echo "<h2>" . htmlspecialchars($info['Name'] ?? basename($file)) . "</h2>";
-    echo "<p><strong>Nome:</strong> " . htmlspecialchars($info['Name'] ?? 'N/A') . "</p>";
-    echo "<p><strong>Comentário:</strong> " . htmlspecialchars($info['Comment'] ?? 'N/A') . "</p>";
-    echo "<p><strong>Execução:</strong> " . htmlspecialchars($info['Exec'] ?? 'N/A') . "</p>";
-    echo "<p><strong>Ícone:</strong> " . htmlspecialchars($info['Icon'] ?? 'N/A') . "</p>";
-    echo "<hr>";
-}
 ?>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplicativos</title>
+    <style>
+        .app-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .app-item {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+            width: 150px;
+        }
+        .app-item img {
+            max-width: 100px;
+            max-height: 100px;
+            display: block;
+            margin: 0 auto;
+        }
+        .app-item p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Aplicativos Instalados</h1>
+    <div class="app-container">
+        <?php
+        foreach ($files as $file) {
+            $info = parseDesktopFile($file);
+            $name = htmlspecialchars($info['Name'] ?? basename($file));
+            $icon = htmlspecialchars($info['Icon'] ?? '');
+
+            // Verificar se o ícone é um caminho relativo ou absoluto
+            if ($icon && !preg_match('/^http/', $icon)) {
+                // Caminho absoluto pode ser necessário para arquivos locais
+                $iconPath = file_exists($icon) ? $icon : '';
+                $iconURL = file_exists($iconPath) ? 'file://' . $iconPath : '';
+            } else {
+                $iconURL = $icon;
+            }
+
+            echo "<div class='app-item'>";
+            if ($iconURL) {
+                echo "<img src='" . htmlspecialchars($iconURL) . "' alt='Ícone'>";
+            }
+            echo "<p><strong>Nome:</strong> " . $name . "</p>";
+            echo "</div>";
+        }
+        ?>
+    </div>
+</body>
+</html>
