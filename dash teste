@@ -5,50 +5,27 @@ sudo chmod 755 ~/.local/share/applications
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-function parseDesktopFile($file) {
-    $data = [];
+// Caminho para o diretório de ícones
+$iconDirectory = '/usr/share/icons/hicolor/';
+$sizes = ['16x16', '32x32', '48x48', 'scalable']; // Tamanhos comuns
 
-    if (file_exists($file)) {
-        $lines = file($file);
+$icons = [];
 
-        foreach ($lines as $line) {
-            $line = trim($line);
+// Percorre os tamanhos dos ícones
+foreach ($sizes as $size) {
+    $path = $iconDirectory . "$size/apps/";
 
-            // Ignorar comentários e linhas em branco
-            if (empty($line) || $line[0] === '#') {
-                continue;
-            }
+    if (is_dir($path)) {
+        $files = glob($path . '*.{png,svg}', GLOB_BRACE);
 
-            // Separar a linha em chave e valor
-            if (strpos($line, '=') !== false) {
-                list($key, $value) = explode('=', $line, 2);
-                $data[$key] = $value;
-            }
+        foreach ($files as $file) {
+            $icons[] = [
+                'path' => $file,
+                'url' => 'file://' . $file,
+                'name' => basename($file)
+            ];
         }
     }
-
-    return $data;
-}
-
-$directory = '/usr/share/applications/';
-$files = glob($directory . '*.desktop');
-
-function getIconPath($iconName) {
-    // Caminhos possíveis para ícones
-    $iconPaths = [
-        "/usr/share/icons/hicolor/16x16/apps/$iconName",
-        "/usr/share/icons/hicolor/32x32/apps/$iconName",
-        "/usr/share/icons/hicolor/48x48/apps/$iconName",
-        "/usr/share/icons/hicolor/scalable/apps/$iconName",
-    ];
-
-    foreach ($iconPaths as $path) {
-        if (file_exists($path)) {
-            return 'file://' . $path;
-        }
-    }
-
-    return '';
 }
 ?>
 
@@ -57,48 +34,42 @@ function getIconPath($iconName) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aplicativos</title>
+    <title>Ícones Disponíveis</title>
     <style>
-        .app-container {
+        .icon-container {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
         }
-        .app-item {
+        .icon-item {
             border: 1px solid #ddd;
             padding: 10px;
             text-align: center;
-            width: 150px;
+            width: 100px;
         }
-        .app-item img {
+        .icon-item img {
             max-width: 100px;
             max-height: 100px;
             display: block;
             margin: 0 auto;
         }
-        .app-item p {
+        .icon-item p {
             margin: 5px 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
     </style>
 </head>
 <body>
-    <h1>Aplicativos Instalados</h1>
-    <div class="app-container">
+    <h1>Ícones Disponíveis</h1>
+    <div class="icon-container">
         <?php
-        foreach ($files as $file) {
-            $info = parseDesktopFile($file);
-            $name = htmlspecialchars($info['Name'] ?? basename($file));
-            $icon = htmlspecialchars($info['Icon'] ?? '');
-
-            $iconURL = getIconPath(basename($icon)); // Pega o nome do ícone e procura nos diretórios
-
-            echo "<div class='app-item'>";
-            if ($iconURL) {
-                echo "<img src='" . htmlspecialchars($iconURL) . "' alt='Ícone'>";
-            } else {
-                echo "<p><em>Ícone não encontrado</em></p>";
-            }
-            echo "<p><strong>Nome:</strong> " . $name . "</p>";
+        // Exibe os ícones
+        foreach ($icons as $icon) {
+            echo "<div class='icon-item'>";
+            echo "<img src='" . htmlspecialchars($icon['url']) . "' alt='Ícone'>";
+            echo "<p>" . htmlspecialchars($icon['name']) . "</p>";
             echo "</div>";
         }
         ?>
